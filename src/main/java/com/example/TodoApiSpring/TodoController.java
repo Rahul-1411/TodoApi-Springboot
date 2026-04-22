@@ -1,6 +1,7 @@
 package com.example.TodoApiSpring;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @RequestMapping("/api/v1/todos")
 public class TodoController {
     private static List<Todo> todoList;
+    private static  final String TODO_NOT_FOUND = "Todo not found";
     public TodoController(){
         todoList = new ArrayList<>();
         todoList.add(new Todo(1,false , "Todo -1",1));
@@ -24,7 +26,8 @@ public class TodoController {
 
     }
     @GetMapping
-    public ResponseEntity<List<Todo>> getTodos(){
+    public ResponseEntity<List<Todo>> getTodos(@RequestParam(required = false,defaultValue = "true") boolean iscompleted){
+        System.out.println("Incoming query params "+ iscompleted);
         return ResponseEntity.status(HttpStatus.CREATED).body(todoList);
     }
     @PostMapping
@@ -35,7 +38,7 @@ public class TodoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newTodo);
     }
     @GetMapping("/{todoId}")
-    public ResponseEntity<Todo> getTodobyId( @PathVariable Long todoId)
+    public ResponseEntity<?> getTodobyId( @PathVariable Long todoId)
     {
         for(Todo todo : todoList)
         {
@@ -45,7 +48,7 @@ public class TodoController {
             }
         }
         // Along with 404 send a json like message todo not found.
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(TODO_NOT_FOUND);
 
     }
 
