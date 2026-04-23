@@ -17,17 +17,22 @@ import java.util.List;
 // written the response in http response body.
 @RequestMapping("/api/v1/todos")
 public class TodoController {
+
+    private  TodoService todoService; // Composition -> Instance of another class as your class properties Has - a properties
     private static List<Todo> todoList;
     private static  final String TODO_NOT_FOUND = "Todo not found";
-    public TodoController(){
+    public TodoController(TodoService todoService){
+        this.todoService = todoService;
         todoList = new ArrayList<>();
         todoList.add(new Todo(1,false , "Todo -1",1));
         todoList.add(new Todo(2,true,"Todo-2",2));
+        //  this.todoService = new TodoService();
 
     }
     @GetMapping
     public ResponseEntity<List<Todo>> getTodos(@RequestParam(required = false,defaultValue = "true") boolean iscompleted){
-        System.out.println("Incoming query params "+ iscompleted);
+
+        System.out.println("Incoming query params "+ iscompleted + " " + this.todoService.doSomething());
         return ResponseEntity.status(HttpStatus.CREATED).body(todoList);
     }
     @PostMapping
@@ -51,6 +56,5 @@ public class TodoController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(TODO_NOT_FOUND);
 
     }
-
 
 }
